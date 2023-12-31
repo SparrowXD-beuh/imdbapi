@@ -53,3 +53,14 @@ app.get("/episodes/:id", async (req, res) => {
     });
     res.send(result);
 })
+
+app.get("/taglines/:id", async (req, res) => {
+    const id = req.params.id;
+    const result = await getTaglines(id).catch((error) => {
+        res.send({
+            status: req.statusCode,
+            error: "Error occured :( \n\n" + error
+        })
+    });
+    res.send(result);
+})
