@@ -3,8 +3,9 @@ const { search, getInfo, getCast, getEpisodes } = require("./search");
 
 
 const app = express();
-app.listen("3000", () => {
-    console.log("API online at http://localhost:3000")
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log("API online at ");
 })
 
 app.get("/title/:name", async (req, res) => {
