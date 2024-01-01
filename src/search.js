@@ -19,7 +19,7 @@ const search = async (titleName) => {
             throw new Error("No results found for search with title " + titleName)
         }
 
-        const results = await Promise.all((imdb_id.slice(0, 1)).map(async (id, index) => {
+        const results = await Promise.all((imdb_id.slice(0, 15)).map(async (id, index) => {
             return await getInfo(id);
         }));
 
@@ -41,7 +41,7 @@ const getInfo = async (imdb_id) => {
         );
         const $ = cheerio.load(response.data);
         const title = $("span.hero__primary-text").text().trim();
-        const poster = $("img.ipc-image").attr("src").trim().replace(/@@.*$/, "@@._V1_QL75_UX3000.jpg");        ;
+        const poster = $("img.ipc-image").attr("src").trim().replace(/@@.*$/, "@@._V1_QL75_UX3000.jpg");
         const genres = [];
         $("div.ipc-chip-list__scroller").find("a").each((index, element) => {
             genres.push($(element).text().trim())
@@ -60,8 +60,8 @@ const getInfo = async (imdb_id) => {
             title,
             type: seasons <= 0 ? "Movie" : "TV series",
             poster,
-            storyline: await getStoryline(imdb_id),
-            taglines: await getTaglines(imdb_id),
+            // storyline: await getStoryline(imdb_id),
+            // taglines: await getTaglines(imdb_id),
             genres,
             creator,
             producers,
