@@ -19,7 +19,7 @@ const search = async (titleName) => {
             throw new Error("No results found for search with title " + titleName)
         }
 
-        const results = await Promise.all((imdb_id.slice(0, 15)).map(async (id, index) => {
+        const results = await Promise.all((imdb_id.slice(0, 5)).map(async (id, index) => {
             return await getInfo(id);
         }));
 
