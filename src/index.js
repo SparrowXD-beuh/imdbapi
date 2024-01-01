@@ -4,8 +4,8 @@ const { search, getInfo, getCast, getEpisodes, getTaglines } = require("./search
 
 const app = express();
 const PORT = process.env.PORT || 3000
+await connectToDatabase();
 app.listen(PORT, async () => {
-    await connectToDatabase();
     console.log("API online");
 });
 
