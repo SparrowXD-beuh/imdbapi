@@ -1,66 +1,75 @@
 const express = require("express");
-const { search, getInfo, getCast, getEpisodes } = require("./search");
-
+const {connectToDatabase} = require("./database")
+const { search, getInfo, getCast, getEpisodes, getTaglines } = require("./search");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log("API online at ");
-})
+const PORT = process.env.PORT || 3000
+app.listen(PORT, async () => {
+    await connectToDatabase();
+    console.log("API online");
+});
 
 app.get("/title/:name", async (req, res) => {
-    const titleName = req.params.name;
-    const result = await search(titleName).catch((error) => {
-        res.send({
-            status: req.statusCode,
-            error: "Error occured :( \n\n" + error
-        })
-    });
-    res.send(result);
-})
+    console.time();
+    try {
+        const titleName = req.params.name;
+        const result = await search(titleName);
+        res.send(result);
+    } catch (error) {
+        res.status(404).send({
+            status: 404,
+            error: "Error occurred :(   " + error
+        });
+    } finally {
+        console.timeEnd();
+    }
+});
 
 app.get("/id/:id", async (req, res) => {
-    const foo = performance.now()
-    const id = req.params.id;
-    const result = await getInfo(id).catch((error) => {
-        res.send({
+    console.time();
+    try {
+        const id = req.params.id;
+        const result = await getInfo(id);
+        res.send(result);
+    } catch (error) {
+        res.status(404).send({
             status: req.statusCode,
-            error: "Error occured :( \n\n" + error
-        })
-    });
-    res.send(result);
-})
+            error: "Error occurred :(   " + error
+        });
+    } finally {
+        console.timeEnd();
+    }
+});
 
 app.get("/cast/:id", async (req, res) => {
-    const id = req.params.id;
-    const result = await getCast(id).catch((error) => {
-        res.send({
+    console.time();
+    try {
+        const id = req.params.id;
+        const result = await getCast(id);
+        res.send(result);
+    } catch (error) {
+        res.status(404).send({
             status: req.statusCode,
-            error: "Error occured :( \n\n" + error
-        })
-    });
-    res.send(result);
-})
+            error: "Error occurred :(   " + error
+        });
+    } finally {
+        console.timeEnd();
+    }
+});
 
 app.get("/episodes/:id", async (req, res) => {
-    const id = req.params.id;
-    const season = req.query.season;
-    const result = await getEpisodes(id, season).catch((error) => {
-        res.send({
+    console.time();
+    try {
+        const id = req.params.id;
+        const season = req.query.season;
+        const result = await getEpisodes(id, season);
+        res.send(result);
+    } catch (error) {
+        res.status(404).send({
             status: req.statusCode,
-            error: "Error occured :( \n\n" + error
-        })
-    });
-    res.send(result);
-})
-
-app.get("/taglines/:id", async (req, res) => {
-    const id = req.params.id;
-    const result = await getTaglines(id).catch((error) => {
-        res.send({
-            status: req.statusCode,
-            error: "Error occured :( \n\n" + error
-        })
-    });
-    res.send(result);
-})
+            error: "Error occurred :(   " + error
+        });
+    } finally {
+        console.timeEnd();
+    }
+});
