@@ -1,6 +1,7 @@
 const { MongoClient } = require("mongodb");
+require("dotenv").config();
 
-const database = new MongoClient(`mongodb+srv://admin:bAF3ne5QrjplxVwn@freecluster.7xu0m7g.mongodb.net/?retryWrites=true&w=majority`);
+const database = new MongoClient(`mongodb+srv://admin:${process.env.PASS}@freecluster.7xu0m7g.mongodb.net/?retryWrites=true&w=majority`);
 async function connectToDatabase() {
     try {
       await database.connect();
