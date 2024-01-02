@@ -1,6 +1,6 @@
 const express = require("express");
 const {connectToDatabase} = require("./database")
-const { search, getInfo, getCast, getEpisodes, getTaglines } = require("./search");
+const { search, getInfo, getCast, getEpisodes, getTaglines, getStoryline } = require("./search");
 
 const app = express();
 const PORT = process.env.PORT || 3000
@@ -18,7 +18,7 @@ app.get("/title/:name", async (req, res) => {
         res.send(result);
     } catch (error) {
         res.status(404).send({
-            status: 404,
+            status: res.statusCode,
             error: "Error occurred :(   " + error
         });
     } finally {
@@ -34,7 +34,7 @@ app.get("/id/:id", async (req, res) => {
         res.send(result);
     } catch (error) {
         res.status(404).send({
-            status: req.statusCode,
+            status: res.statusCode,
             error: "Error occurred :(   " + error
         });
     } finally {
@@ -50,7 +50,7 @@ app.get("/cast/:id", async (req, res) => {
         res.send(result);
     } catch (error) {
         res.status(404).send({
-            status: req.statusCode,
+            status: res.statusCode,
             error: "Error occurred :(   " + error
         });
     } finally {
@@ -67,7 +67,23 @@ app.get("/episodes/:id", async (req, res) => {
         res.send(result);
     } catch (error) {
         res.status(404).send({
-            status: req.statusCode,
+            status: res.statusCode,
+            error: "Error occurred :(   " + error
+        });
+    } finally {
+        console.timeEnd();
+    }
+});
+
+app.get("/storyline/:id", async (req, res) => {
+    console.time();
+    try {
+        const id = req.params.id;
+        const result = await getStoryline(id);
+        res.send(result);
+    } catch (error) {
+        res.status(404).send({
+            status: res.statusCode,
             error: "Error occurred :(   " + error
         });
     } finally {
