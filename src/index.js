@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const cors = require("cors")
 const {connectToDatabase} = require("./database")
 const { search, getInfo, getCast, getEpisodes, getTaglines, getStoryline, getDocs } = require("./search");
 
@@ -10,8 +11,9 @@ connectToDatabase().then(() => {
     });
 })
 
+app.use(cors());
 app.get('/favicon.ico', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/favicon.ico'));
+    res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
 });
 
 app.get("/", async (req, res) => {
