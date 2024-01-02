@@ -18,7 +18,7 @@ async function find(imdb_id, collection) {
 };
 
 async function insert(doc, collection) {
-    const ttl = 60;
+    const ttl = 604800;
     await database.db("imdb").collection(collection).createIndex({ "expiresAt": 1 }, { expireAfterSeconds: ttl });
     doc.expiresAt = new Date();
     doc.expiresAt.setSeconds(doc.expiresAt.getSeconds() + ttl);
