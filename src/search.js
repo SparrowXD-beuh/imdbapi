@@ -41,7 +41,7 @@ const getInfo = async (imdb_id) => {
         );
         const $ = cheerio.load(response.data);
         const title = $("span.hero__primary-text").text().trim();
-        const poster = $("img.ipc-image").attr("src").trim().replace(/@@.*$/, "@@._V1_QL75_UX3000.jpg");
+        const poster = $("img.ipc-image").attr("src").trim().replace(/UX.*\.jpg/, "UX3000.jpg");
         const genres = [];
         $("div.ipc-chip-list__scroller").find("a").each((index, element) => {
             genres.push($(element).text().trim())
@@ -58,7 +58,7 @@ const getInfo = async (imdb_id) => {
         const doc = {
             _id: imdb_id,
             title,
-            type: seasons <= 0 ? "Movie" : "TV series",
+            type: seasons <= 0 ? "Movie" : "TV show",
             poster,
             // storyline: await getStoryline(imdb_id),
             // taglines: await getTaglines(imdb_id),
@@ -79,23 +79,29 @@ const getInfo = async (imdb_id) => {
 
 const getStoryline = async (imdb_id) => {
     try {
+        const exists = await find(imdb_id, "plotsummary");
+        if (exists) return exists;
         const result = await axios.get(`https://www.imdb.com/title/${imdb_id}/plotsummary`, {
             headers: headers,
         })
         const $ = cheerio.load(result.data);
         const textArray = [];
-        $("div.ipc-html-content-inner-div").each((index, element) => {
-            const text = $(element).text().trim();
-            textArray.push(text);
-        });
-        return textArray
+        await Promise.all($("div.ipc-html-content-inner-div").each((index, element) => {
+            textArray.push($(element).text().trim());
+        }));
+        if (textArray.length <= 0) throw new Error("Invalid imdb_id")
+        await insert({_id: imdb_id, storyline: textArray}, "plotsummary");
+        return {_id: imdb_id, storyline: textArray};
     } catch (error) {
         console.error("Error in getStoryline():", error.message);
+        throw error;
     }
 };
 
 const getTaglines = async (imdb_id) => {
     try {
+        const exists = await find(imdb_id, "taglines");
+        if (exists) return exists;
         const result = await axios.get(`https://www.imdb.com/title/${imdb_id}/taglines`, {
             headers: headers,
         })
@@ -104,9 +110,12 @@ const getTaglines = async (imdb_id) => {
         $("div.ipc-html-content-inner-div").each((index, element) => {
             taglinesArray.push($(element).text().trim());
         });
-        return taglinesArray;
+        if (textArray.length <= 0) throw new Error("Invalid imdb_id")
+        await insert({_id: imdb_id, taglines: taglinesArray}, "taglines");
+        return {_id: imdb_id, taglines: taglinesArray};
     } catch (error) {
         console.error("Error in getTaglines():", error.message);
+        throw error;
     }
 };
 
@@ -176,4 +185,4 @@ const getCast = async (imdb_id) => {
 };
 
 
-module.exports = { search, getInfo, getCast, getEpisodes, getTaglines };
+module.exports = { search, getInfo, getCast, getEpisodes, getTaglines, getStoryline };
