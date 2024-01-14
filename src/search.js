@@ -48,9 +48,7 @@ const getInfo = async (imdb_id) => {
         const creator = $("a.ipc-metadata-list-item__list-content-item").eq(0).text().trim();
         const seasons = $("select#browse-episodes-season").find("option").length - 2;
         const episodes = parseInt($("span.ipc-title__subtext").eq(0).text().trim());
-        const textArray = $("div.ipc-html-content-inner-div").map((index, element) => {
-            return ($(element).text().trim());
-        }).get();
+        const storyline = $('span.sc-466bb6c-0').text().trim();
         const doc = {
             _id: imdb_id,
             data: {
@@ -58,7 +56,7 @@ const getInfo = async (imdb_id) => {
                 title,
                 type: seasons <= 0 ? "Movie" : "TV show",
                 poster,
-                storyline: textArray,
+                storyline,
                 // taglines: await getTaglines(imdb_id),
                 genres,
                 creator,
